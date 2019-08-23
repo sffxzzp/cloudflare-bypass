@@ -1,6 +1,8 @@
 # cloudflare-bypass
 Bypass Cloudflare's anti-bot page. (without any JS dependency)
 
+**It's still unstable, won't work sometimes.**
+
 # Usage
 Just an example, edit the code before you use.
 
