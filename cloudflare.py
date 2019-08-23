@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import re, requests
+import re, requests, time
 from urllib.parse import quote as urlencode
 
 def findstr(rule, string):
@@ -36,10 +36,12 @@ class weblib:
 			return ''
 
 class cloudflare:
-	def __init__(self, url):
+	def __init__(self, url=''):
 		self.weblib = weblib()
-		self.get(url)
+		if url != '':
+			self.get(url)
 	def get(self, url):
+		print(url)
 		html = self.weblib.get(url)
 		if 'cf-browser-verification' in html:
 			urlSch = 'https://' if 'https://' in url else 'http://'
@@ -58,6 +60,8 @@ class cloudflare:
 			passkey = findstr('input type="hidden" name="pass" value="(.*?)"', html)[0]
 			answer = round(fCode+urlLen, 10);
 			postURL = postPath+'?s='+s+'&jschl_vc='+jschl_vc+'&pass='+passkey+'&jschl_answer='+str(answer)
+			print(postURL)
+			time.sleep(5)
 			result = self.weblib.get(postURL)
 			return result
 		return html
@@ -71,7 +75,7 @@ class cloudflare:
 			fnumd += str(eval(num))
 		return int(fnumu)/int(fnumd)
 
-web = cloudflare('https://steamdb.info/')
+web = cloudflare()
 content = web.get('https://steamdb.info/sub/344127/')
 print(web.weblib.getCookie())
 print(content)
