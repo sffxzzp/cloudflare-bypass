@@ -74,4 +74,5 @@ class cloudflare:
 
 web = cloudflare('https://steamdb.info/')
 content = web.get('https://steamdb.info/sub/344127/')
+print(web.weblib.getCookie())
 print(content)
