@@ -41,7 +41,7 @@ class cloudflare:
 		self.get(url)
 	def get(self, url):
 		html = self.weblib.get(url)
-		if 'cf-browser-verification' in html or 'complete_sec_check' in html:
+		if 'cf-browser-verification' in html:
 			urlSch = 'https://' if 'https://' in url else 'http://'
 			urlBase = url.replace('http://', '').replace('https://', '').split('/')[0]
 			urlLen = len(urlBase)
