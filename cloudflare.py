@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import re, requests, time
+import re, requests
 from urllib.parse import quote as urlencode
 
 def findstr(rule, string):
@@ -58,7 +58,6 @@ class cloudflare:
 			passkey = findstr('input type="hidden" name="pass" value="(.*?)"', html)[0]
 			answer = round(fCode+urlLen, 10);
 			postURL = postPath+'?s='+s+'&jschl_vc='+jschl_vc+'&pass='+passkey+'&jschl_answer='+str(answer)
-			time.sleep(5)
 			result = self.weblib.get(postURL)
 			return result
 		return html
