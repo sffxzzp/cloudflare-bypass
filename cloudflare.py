@@ -6,43 +6,16 @@ def findstr(rule, string):
 	find_str = re.compile(rule)
 	return find_str.findall(string)
 
-class weblib:
-	def __init__(self):
-		self.headers = {
-			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36'
-		}
-		self.jar = requests.cookies.RequestsCookieJar()
-	def setCookie(self, key, value):
-		self.jar.set(key, value)
-	def getCookie(self):
-		return requests.utils.dict_from_cookiejar(self.cookies)
-	def get(self, url, chardet=False):
-		try:
-			req = requests.get(url, headers = self.headers, cookies = self.jar, timeout=90)
-			self.cookies = req.cookies
-			if chardet:
-				req.encoding = requests.utils.get_encodings_from_content(req.text)[0]
-			return req.text
-		except:
-			return ''
-	def post(self, url, postdata, chardet=False):
-		try:
-			req = requests.post(url, headers = self.headers, cookies = self.jar, data = postdata, timeout=90)
-			self.cookies = req.cookies
-			if chardet:
-				req.encoding = requests.utils.get_encodings_from_content(req.text)[0]
-			return req.text
-		except:
-			return ''
-
 class cloudflare:
 	def __init__(self, url=''):
-		self.weblib = weblib()
+		self.cookies = []
+		self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36'}
 		if url != '':
 			self.get(url)
 	def get(self, url):
 		print(url)
-		html = self.weblib.get(url)
+		html = requests.get(url, headers=self.headers)
+		html = html.text
 		if 'cf-browser-verification' in html:
 			urlSch = 'https://' if 'https://' in url else 'http://'
 			urlBase = url.replace('http://', '').replace('https://', '').split('/')[0]
@@ -61,9 +34,10 @@ class cloudflare:
 			answer = round(fCode+urlLen, 10);
 			postURL = postPath+'?s='+s+'&jschl_vc='+jschl_vc+'&pass='+passkey+'&jschl_answer='+str(answer)
 			print(postURL)
-			time.sleep(5)
-			result = self.weblib.get(postURL)
-			return result
+			time.sleep(4)
+			result = requests.get(postURL, headers=self.headers)
+			self.cookies = requests.utils.dict_from_cookiejar(result.cookies)
+			return result.text
 		return html
 	def decodeJSCode(self, code):
 		code = code.replace('!![]', '1').replace('!+[]', '1').replace('(+[])', '(0)').replace('+((', '(').replace('))', ')').split('/')
@@ -77,5 +51,5 @@ class cloudflare:
 
 web = cloudflare()
 content = web.get('https://steamdb.info/sub/344127/')
-print(web.weblib.getCookie())
+print(web.cookies)
 print(content)
